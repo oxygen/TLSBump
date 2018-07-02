@@ -63,8 +63,8 @@ async function runCLICommandWrapper(strCommand)
 }
 
 async function service_install(strServiceName, strServiceFileContents){
-	strDirectoryPath = "/usr/lib/systemd/system";
-	strUnitFilePath = path.join(strDirectoryPath, strServiceName) + ".service";
+	let strDirectoryPath = "/usr/lib/systemd/system";
+	let strUnitFilePath = path.join(strDirectoryPath, strServiceName) + ".service";
 	//Compare existing file content with the new strServiceFileContents
 	if(fs.existsSync(strUnitFilePath))
 	{
