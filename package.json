@@ -1,0 +1,16 @@
+{
+  "name": "tlsbumpforeasyhost",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http-proxy": "^1.17.0",
+    "node-http-proxy": "^0.2.3",
+    "range_check": "^1.4.0"
+  }
+}
