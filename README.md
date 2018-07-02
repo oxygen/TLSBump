@@ -18,3 +18,5 @@ After downloading/cloning this app, run `npm install` inside the root directory,
 Start the application using `node index.js` to listen on 8059, or `node index.js 80` to listen on a custom port, in this example 80.
 
 Use a node version which still supports TLS 1.0. Try 8.11.3.
+
+To install as a Linux system service use `node setup_systemd.js`, then check if it is up and running using `systemctl status tlsbump`.

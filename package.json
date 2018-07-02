@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "fs-extra": "^6.0.1",
     "http-proxy": "^1.17.0",
+    "mkdirp": "^0.5.1",
     "node-http-proxy": "^0.2.3",
     "range_check": "^1.4.0"
   }
