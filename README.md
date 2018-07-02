@@ -15,7 +15,7 @@ If this server is **not** hosted on the same machine as the legacy application, 
 
 After downloading/cloning this app, run `npm install` inside the root directory, to populate the node_modules directory.
 
-Start the application using `node index.js` to listen on 8059, or `node index.js 80` to listen on a custom port, in this example 80.
+Start the application using `node index.js` to listen on 8059, or `node index.js 0.0.0.0 80 443` to listen on a custom port, in this example 80 and 443.
 
 Use a node version which still supports TLS 1.0. Try 8.11.3.
 
