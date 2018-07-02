@@ -79,7 +79,19 @@ class Main
 				}
 
 				nListeningPort = process.argv[3];
-			}	
+
+				
+				if(process.argv[4])
+				{
+					if(!String(process.argv[3].match(/^[0-9]{1, 5}$/) && parseInt(process.argv[4]) >= 1 && parseInt(process.argv[4]) <= 65535))
+					{
+						console.error(os.EOL + "Invalid listening port param. Usage ([listen ip] [listen http port] [listen https port]): node index.js 0.0.0.0 8059 8060" + os.EOL + os.EOL);
+						process.exit(1);
+					}
+
+					nListeningPortSSL = process.argv[4];
+				}
+			}
 		}
 
 		this._httpServer.listen(nListeningPort, strListenIP);

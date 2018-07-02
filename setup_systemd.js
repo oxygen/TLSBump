@@ -11,7 +11,7 @@ const strServiceFileContents = `
 	[Service]
 	SyslogIdentifier=tlsbump
 	User=root
-	ExecStart= /usr/bin/node ${path.join(__dirname, "index.js")}
+	ExecStart= /usr/bin/node ${path.join(__dirname, "index.js")} 0.0.0.0 8059 8060
 	KillMode=process
 	#StartLimitIntervalSec=5
 	StartLimitInterval=5
