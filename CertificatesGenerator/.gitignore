@@ -1,0 +1,8 @@
+db/*
+ca/*
+csr/*
+server/*
+*.key
+*.crt
+*.csr
+

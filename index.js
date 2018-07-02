@@ -4,6 +4,8 @@ const HTTPProxy = require("http-proxy");
 const rangeCheck = require("range_check");
 const os = require("os");
 const net = require("net");
+const fs = require("fs");
+
 
 process.on(
 	"unhandledRejection",
@@ -38,13 +40,14 @@ class Main
 
 
 		this._httpServer = http.createServer();
-		this._httpsServer = http.createServer({
-			key: fs.readFileSync("/etc/TLSBump/Certificates/server.key"),
-			cert: fs.readFileSync("/etc/TLSBump/Certificates/server.key"),
-			ca: fs.readFileSync(Settings.caCertificatePath),
+		this._httpsServer = https.createServer({
+			key: fs.readFileSync("/etc/TLSBump/Certificates/server/private.pem"),
+			cert: fs.readFileSync("/etc/TLSBump/Certificates/server/server.crt"),
+			ca: fs.readFileSync("/etc/TLSBump/Certificates/ca/ca.crt"),
 			requestCert: false, 
 			rejectUnauthorized: false
 		});
+		
 
 		this._httpsServer.on("request", (incomingRequest, serverResponse) => {
 			this.processHTTPRequest(incomingRequest, serverResponse);

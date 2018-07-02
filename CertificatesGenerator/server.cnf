@@ -1,0 +1,30 @@
+[req]
+default_bits       = 4096
+default_md         = sha512
+default_keyfile    = private.pem
+prompt             = no
+encrypt_key        = no
+
+distinguished_name = req_distinguished_name
+
+req_extensions     = v3_req
+
+[req_distinguished_name]
+countryName            = "XX"
+stateOrProvinceName    = "TLSBump"
+localityName           = "TLSBump"
+postalCode             = "00000"
+streetAddress          = "TLSBump"
+organizationName       = "TLSBump"
+organizationalUnitName = "TLSBump"
+commonName             = "ca.tlsbump"
+emailAddress           = "root@tlsbump"
+
+[v3_req]
+subjectAltName  = @alt_names
+
+[alt_names]
+DNS.1 = ca.tlsbump
+DNS.1 = tlsbump
+DNS.2 = mars.transaction.datacash.com
+IP.1 = 192.168.1.1

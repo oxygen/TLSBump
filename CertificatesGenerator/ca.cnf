@@ -1,0 +1,67 @@
+[ca]
+default_ca  = CA_default
+
+
+[CA_default]
+base_dir    = /etc/TLSBump/Certificates/
+certificate = $base_dir/ca/ca.crt
+private_key = $base_dir/ca/ca.pem
+new_certs_dir   = $base_dir/server
+database    = $base_dir/db/index.txt
+serial      = $base_dir/db/serial.txt
+unique_subject  = no
+
+default_md        = sha256
+
+name_opt          = ca_default
+cert_opt          = ca_default
+default_days      = 99999
+preserve          = no
+policy            = policy_strict
+
+
+[req]
+default_bits       = 4096
+default_md         = sha512
+default_keyfile    = key.pem
+prompt             = no
+encrypt_key        = no
+
+distinguished_name = req_distinguished_name
+
+#req_extensions     = v3_req
+
+
+[req_distinguished_name]
+countryName            = "XX"
+stateOrProvinceName    = "TLSBump"
+localityName           = "TLSBump"
+postalCode             = "00000"
+streetAddress          = "TLSBump"
+organizationName       = "TLSBump"
+organizationalUnitName = "TLSBump"
+commonName             = "ca.tlsbump"
+emailAddress           = "root@tlsbump"
+
+
+[v3_req]
+subjectAltName  = DNS:ca.tlsbump,DNS:tlsbump,DNS:mars.transaction.datacash.com,IP:192.168.1.1
+
+
+[signing_policy]
+countryName     = optional
+stateOrProvinceName = optional
+localityName        = optional
+organizationName    = optional
+organizationalUnitName  = optional
+commonName      = supplied
+emailAddress        = optional
+
+
+[signing_req]
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
+
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+
