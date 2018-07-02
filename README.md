@@ -3,7 +3,7 @@ Hacked together a TLS 1.0 bump to newer TLS for some legacy 15 y.o. systems, urg
 
 Be careful if using this, this is not secured and can be used malliciously unless you know your network well.
 
-Modify the /etc/hosts or %windir%\System32\etc\hosts of the legacy system to have `some.outgoing.domain.com` sufixed with `.tlsbump` like this: `some.outgoing.domain.com.tlsbump`.
+Modify the /etc/hosts or %windir%\System32\etc\hosts of the legacy system to have `some.outgoing.domain.com` sufixed with `.tlsbump` like this: `127.0.0.1 some.outgoing.domain.com.tlsbump`.
 
 The server listens on `8059`, and by default forwards to `443`.
 

@@ -36,7 +36,7 @@ class Main
 			secure: false
 		});
 
-		this._arrAllowedRemoteSubnets = ["127.0.0.0/24", "192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12"];
+		this._arrAllowedRemoteSubnets = ["127.0.0.0/24", "192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "89.36.24.2/32"];
 
 
 		this._httpServer = http.createServer();
