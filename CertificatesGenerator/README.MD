@@ -1,4 +1,6 @@
-# Development Certificate Authority
+# SelfSigned Certificate Authority
+
+Older Linux systems may have very different ways of installing trusted CAs.
 
 Currently, the .cnf files have hardcoded domains and IPs. Nothing is automated.
 
@@ -25,11 +27,4 @@ certutil -addstore -f "ROOT" ca/ca.crt
 ### Firefox (has its own store)
  * Go to Options (Settings) Advanced / Certificates / See certificates / Import
  * Authorize for websites.
-
-
-### iOS
-Serve the ca.crt file through http(s), with this header: `Content-Type: application/x-x509-ca-cert`
-
-
-### Android
-Don't have an Android yet, do you?
+ 
