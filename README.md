@@ -13,4 +13,6 @@ So, `https://some.outgoing.domain.com/xxx` (http WITH s) needs to be modified in
 
 If this server is **not** hosted on the same machine as the legacy application, then you may go **without .tlsbump trick**, just override the original domain and you're good.
 
+After downloading/cloning this app, run `npm install` inside the root directory, to populate the node_modules directory.
+
 Start the application using `node index.js` to listen on 8059, or `node index.js 80` to listen on a custom port, in this example 80.

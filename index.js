@@ -2,10 +2,8 @@ const http = require("http");
 const https = require("https");
 const HTTPProxy = require("http-proxy");
 const rangeCheck = require("range_check");
-
-http
-
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+const os = require("os");
+const net = require("net");
 
 process.on(
 	"unhandledRejection",
@@ -40,12 +38,52 @@ class Main
 
 
 		this._httpServer = http.createServer();
+		this._httpsServer = http.createServer({
+			key: fs.readFileSync("/etc/TLSBump/Certificates/server.key"),
+			cert: fs.readFileSync("/etc/TLSBump/Certificates/server.key"),
+			ca: fs.readFileSync(Settings.caCertificatePath),
+			requestCert: false, 
+			rejectUnauthorized: false
+		});
+
+		this._httpsServer.on("request", (incomingRequest, serverResponse) => {
+			this.processHTTPRequest(incomingRequest, serverResponse);
+		});
 
 		this._httpServer.on("request", (incomingRequest, serverResponse) => {
 			this.processHTTPRequest(incomingRequest, serverResponse);
 		});
 
-		this._httpServer.listen(8059, "0.0.0.0");
+		let nListeningPort = 8059;
+		let nListeningPortSSL = 8060;
+		let strListenIP = "0.0.0.0";
+		if(process.argv[2])
+		{
+			if(!net.isIP(process.argv[2]))
+			{
+				console.error(os.EOL + "Invalid listening IP param. Usage: node index.js 0.0.0.0 8059 8060" + os.EOL + os.EOL);
+				process.exit(1);
+			}
+
+			strListenIP = process.argv[2];
+
+			if(process.argv[3])
+			{
+				if(!String(process.argv[3].match(/^[0-9]{1, 5}$/) && parseInt(process.argv[3]) >= 1 && parseInt(process.argv[3]) <= 65535))
+				{
+					console.error(os.EOL + "Invalid listening port param. Usage ([listen ip] [listen http port] [listen https port]): node index.js 0.0.0.0 8059 8060" + os.EOL + os.EOL);
+					process.exit(1);
+				}
+
+				nListeningPort = process.argv[3];
+			}	
+		}
+
+		this._httpServer.listen(nListeningPort, strListenIP);
+		this._httpsServer.listen(nListeningPortSSL, strListenIP);
+
+
+		console.log("Listening on " + strListenIP + " on HTTP port " + nListeningPort + " and HTTPS port " + nListeningPortSSL);
 
 		setInterval(() => {}, 19999);
 	}
