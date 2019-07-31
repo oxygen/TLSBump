@@ -41,9 +41,9 @@ class Main
 
 		this._httpServer = http.createServer();
 		this._httpsServer = https.createServer({
-			key: fs.readFileSync("/etc/TLSBump/Certificates/server/private.pem"),
-			cert: fs.readFileSync("/etc/TLSBump/Certificates/server/server.crt"),
-			ca: fs.readFileSync("/etc/TLSBump/Certificates/ca/ca.crt"),
+			key: fs.existsSync("/etc/TLSBump/Certificates/server/private.pem") ? fs.readFileSync("/etc/TLSBump/Certificates/server/private.pem") : undefined,
+			cert: fs.existsSync("/etc/TLSBump/Certificates/server/server.crt") ? fs.readFileSync("/etc/TLSBump/Certificates/server/server.crt") : undefined,
+			ca: fs.existsSync("/etc/TLSBump/Certificates/ca/ca.crt") ? fs.readFileSync("/etc/TLSBump/Certificates/ca/ca.crt") : undefined,
 			requestCert: false, 
 			rejectUnauthorized: false
 		});
@@ -64,7 +64,7 @@ class Main
 		{
 			if(!net.isIP(process.argv[2]))
 			{
-				console.error(os.EOL + "Invalid listening IP param. Usage: node index.js 0.0.0.0 8059 8060" + os.EOL + os.EOL);
+				console.error(os.EOL + "Invalid listening IP param. Usage: node index.js 0.0.0.0 8059 8060 insecuretarget" + os.EOL + os.EOL);
 				process.exit(1);
 			}
 
@@ -74,7 +74,7 @@ class Main
 			{
 				if(!String(process.argv[3].match(/^[0-9]{1, 5}$/) && parseInt(process.argv[3]) >= 1 && parseInt(process.argv[3]) <= 65535))
 				{
-					console.error(os.EOL + "Invalid listening port param. Usage ([listen ip] [listen http port] [listen https port]): node index.js 0.0.0.0 8059 8060" + os.EOL + os.EOL);
+					console.error(os.EOL + "Invalid listening port param. Usage ([listen ip] [listen http port] [listen https port] [insecuretarget]): node index.js 0.0.0.0 8059 8060" + os.EOL + os.EOL);
 					process.exit(1);
 				}
 
@@ -85,7 +85,7 @@ class Main
 				{
 					if(!String(process.argv[3].match(/^[0-9]{1, 5}$/) && parseInt(process.argv[4]) >= 1 && parseInt(process.argv[4]) <= 65535))
 					{
-						console.error(os.EOL + "Invalid listening port param. Usage ([listen ip] [listen http port] [listen https port]): node index.js 0.0.0.0 8059 8060" + os.EOL + os.EOL);
+						console.error(os.EOL + "Invalid listening port param. Usage ([listen ip] [listen http port] [listen https port] [insecuretarget]): node index.js 0.0.0.0 8059 8060" + os.EOL + os.EOL);
 						process.exit(1);
 					}
 
@@ -93,6 +93,24 @@ class Main
 				}
 			}
 		}
+
+
+		if(process.argv[5])
+		{
+			if(process.argv[5] === "insecuretarget")
+			{
+				process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+			}
+			else
+			{
+				console.error(os.EOL + "Invalid target certificate security level. Usage ([listen ip] [listen http port] [listen https port] [insecuretarget]): node index.js 0.0.0.0 8059 8060 insecuretarget" + os.EOL + os.EOL);
+				process.exit(1);
+			}
+		}
+
+
+		this._nListeningPort = nListeningPort;
+		this._nListeningPortSSL = nListeningPortSSL;
 
 		this._httpServer.listen(nListeningPort, strListenIP);
 		this._httpsServer.listen(nListeningPortSSL, strListenIP);
@@ -139,8 +157,9 @@ class Main
 		}
 
 		const strRequestedDomain = incomingRequest.headers.host.split(":")[0];
+		let nProxyPort = incomingRequest.headers.host.split(":")[1] || (incomingRequest.socket.encrypted ? this._nListeningPortSSL : this._nListeningPort);
 
-		this._proxyRequest(incomingRequest, serverResponse, strRequestedDomain);
+		this._proxyRequest(incomingRequest, serverResponse, strRequestedDomain, nProxyPort);
 	}
 
 
@@ -149,7 +168,7 @@ class Main
 	 * @param {http.ServerResponse} serverResponse 
 	 * @param {string} strRequestedDomain
 	 */
-	_proxyRequest(incomingRequest, serverResponse, strRequestedDomain)
+	_proxyRequest(incomingRequest, serverResponse, strRequestedDomain, nProxyPort = 443)
 	{
 		let nTargetPort = 443; 
 
@@ -157,16 +176,19 @@ class Main
 		{
 			strRequestedDomain = strRequestedDomain.substr(0, strRequestedDomain.length - ".tlsbump".length)
 		}
-
-		if(strRequestedDomain.match(/.*\.tlsbump[0-9]+$/i))
+		else if(strRequestedDomain.match(/.*\.tlsbump[0-9]+$/i))
 		{
 			const arrMatches = strRequestedDomain.match(/(.*)\.tlsbump([0-9]{1,5})$/i);
 			strRequestedDomain = arrMatches[1];
 			nTargetPort = parseInt(arrMatches[2], 10);
 		}
+		else
+		{
+			nTargetPort = nProxyPort;
+		}
 
 		console.log("Proxying " + strRequestedDomain + " " + incomingRequest.method + " " + incomingRequest.url);
-		
+
 		/*if(strRequestedDomain === "somebody.com")
 		{
 			nTargetPort: 7216;
